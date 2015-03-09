@@ -1,0 +1,24 @@
+{
+  "name": "porkchopsandwiches/doctrine-utilities",
+  "description": "Some general utility classes suitable for use with Doctrine.",
+  "keywords": ["doctrine"],
+  "license": "MIT",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Cam Morrow",
+      "email": "cam@hoodlum.com.au",
+      "homepage": "http://www.hoodlum.com.au"
+    }
+  ],
+  "require": {
+    "php": ">=5.5",
+    "doctrine/orm": "~2.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "4.5.*"
+  },
+  "autoload": {
+    "psr-0": {"PorkChopSandwiches\\Doctrine\\Utilities": "lib/src"}
+  }
+}
