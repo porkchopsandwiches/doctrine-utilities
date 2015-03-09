@@ -3,7 +3,6 @@
   "description": "Some general utility classes suitable for use with Doctrine.",
   "keywords": ["doctrine"],
   "license": "MIT",
-  "version": "1.0.0",
   "authors": [
     {
       "name": "Cam Morrow",
