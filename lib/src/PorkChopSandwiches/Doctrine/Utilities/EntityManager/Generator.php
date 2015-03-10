@@ -23,6 +23,8 @@ use Exception;
  */
 class Generator {
 
+	const DOCTRINE_ANNOTATIONS_FILE_PATH = "/vendor/doctrine/orm/lib/Doctrine/ORM/Mapping/Driver/DoctrineAnnotations.php";
+
 	/**
 	 * Manufactures an EntityManager instance using the passed configuration.
 	 *
@@ -32,7 +34,7 @@ class Generator {
 	 * @param array					$entity_paths
 	 * @param boolean				[$autogenerate_strategy]
 	 * @param boolean				[$ensure_production_settings]
-	 * @param string|null			[$root_path]
+	 * @param string				[$doctrine_annotations_file_path]
 	 * @param string				[$proxy_namespace]
 	 * @param string				[$proxy_dir]
 	 *
@@ -40,26 +42,19 @@ class Generator {
 	 *
 	 * @return EntityManager
 	 */
-	static public function manufacture ($conn, Cache $cache_driver, Reader $annotation_reader, array $entity_paths, $autogenerate_strategy = false, $ensure_production_settings = false, $root_path = null, $proxy_namespace = "Doctrine\\Proxies", $proxy_dir = "/lib/src/Doctrine/Proxies") {
+	static public function manufacture ($conn, Cache $cache_driver, Reader $annotation_reader, array $entity_paths, $autogenerate_strategy = false, $ensure_production_settings = false, $doctrine_annotations_file_path = self::DOCTRINE_ANNOTATIONS_FILE_PATH, $proxy_namespace = "Doctrine\\Proxies", $proxy_dir = "/lib/src/Doctrine/Proxies") {
 		# Let the IDE know that the annotation reader is of the expected type
 		/** @var AnnotationReader $annotation_reader */
 
 		$config				= new Configuration();
 
-		if (is_null($root_path)) {
-			if (defined("ROOT_PATH")) {
-				$root_path = ROOT_PATH;
-			} else {
-				throw new Exception("No root path found and no ROOT_PATH constant set.");
-			}
-		}
 
 		# Set up the Metadata Cache implementation -- this caches the scraped Metadata Configuration (i.e. the Annotations/XML/YAML) values
 		# !!!WARNING!!! - Doctrine does NOT throw an error if it can't connect to MemCache, it just silently goes on without a cache. ALWAYS CHECK TO SEE IF CACHE IS BEING POPULATED ($cache_driver -> getStats())
 		$config -> setMetadataCacheImpl($cache_driver);
 
 		# Register the Annotation handle file for reasons that are not entirely clear
-		AnnotationRegistry::registerFile($root_path . "/vendor/doctrine/orm/lib/Doctrine/ORM/Mapping/Driver/DoctrineAnnotations.php");
+		AnnotationRegistry::registerFile($doctrine_annotations_file_path);
 
 		# Set up the Metadata Driver implementation -- this tells Doctrine where to find the Annotated PHP classes to form Entities
 		#$paths = require $root_path . "/config/entity_paths.php";
@@ -70,7 +65,7 @@ class Generator {
 
 		# Set up the Proxy directory where Doctrine will store Proxy classes
 		# Also set the namespace so the autoloader can find them(?)
-		$config -> setProxyDir($root_path . $proxy_dir);
+		$config -> setProxyDir($proxy_dir);
 		$config -> setProxyNamespace($proxy_namespace);
 
 		# Configure proxy generation
