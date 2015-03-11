@@ -2,3 +2,6 @@
 /composer.lock
 /.idea
 /public
+/cli-config.php
+/config
+/lib/src/PorkChopSandwiches/Doctrine/Utilities/Samples
