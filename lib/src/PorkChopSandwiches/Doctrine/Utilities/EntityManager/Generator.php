@@ -48,35 +48,34 @@ class Generator {
 
 		$config				= new Configuration();
 
-
 		# Set up the Metadata Cache implementation -- this caches the scraped Metadata Configuration (i.e. the Annotations/XML/YAML) values
-		# !!!WARNING!!! - Doctrine does NOT throw an error if it can't connect to MemCache, it just silently goes on without a cache. ALWAYS CHECK TO SEE IF CACHE IS BEING POPULATED ($cache_driver -> getStats())
+		# !!!WARNING!!! If using MemCache - Doctrine does NOT throw an error if it can't connect to MemCache, it just silently goes on without a cache.
+		# Always check to see if the cache is being populated ($cache_driver -> getStats())
 		$config -> setMetadataCacheImpl($cache_driver);
 
-		# Register the Annotation handle file for reasons that are not entirely clear
+		# Register the Annotation handle file
+		# See http://doctrine-common.readthedocs.org/en/latest/reference/annotations.html for details
 		AnnotationRegistry::registerFile($doctrine_annotations_file_path);
 
 		# Set up the Metadata Driver implementation -- this tells Doctrine where to find the Annotated PHP classes to form Entities
-		#$paths = require $root_path . "/config/entity_paths.php";
 		$config -> setMetadataDriverImpl(new AnnotationDriver($annotation_reader, $entity_paths));
 
 		# Set up the Query Cache implementation -- this caches DQL query transformations into plain SQL
 		$config -> setQueryCacheImpl($cache_driver);
 
-		# Set up the Proxy directory where Doctrine will store Proxy classes
-		# Also set the namespace so the autoloader can find them(?)
+		# Set up the Proxy directory where Doctrine will store Proxy classes, and the namespace they will have
 		$config -> setProxyDir($proxy_dir);
 		$config -> setProxyNamespace($proxy_namespace);
 
 		# Configure proxy generation
 		$config -> setAutoGenerateProxyClasses($autogenerate_strategy);
 
-		# Test production settings
+		# Test production settings if desired
 		if ($ensure_production_settings) {
 			$config -> ensureProductionSettings();
 		}
 
-		# If connection is just the raw details for the moment, generate the real deal
+		# If connection is just the raw details for the moment, generate the real deal now
 		if (is_array($conn)) {
 			$conn = DriverManager::getConnection($conn, $config);
 		}
